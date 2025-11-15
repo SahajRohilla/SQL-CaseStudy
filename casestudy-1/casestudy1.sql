@@ -197,12 +197,39 @@ SELECT count(*) as feb_emp_count
 from dbo.employee
 where MONTH(hire_date) =2;
 
-7. How many employees joined in May or June month. 
-8. How many employees joined in 1985? 
-9. How many employees joined each month in 1985? 
-10. How many employees were joined in April 1985? 
-11. Which is the Department ID having greater than or equal to 3 employees 
-joining in April 1985? 
+--7. How many employees joined in May or June month. 
+SELECT count(*) as may_june_count
+from dbo.employee
+where MONTH(hire_date) in (5,6);
+
+-- 8. How many employees joined in 1985? 
+SELECT count(*) as emp_1985_count
+from dbo.employee
+where YEAR(hire_date) = 1985;
+
+-- 9. How many employees joined each month in 1985? 
+SELECT Month(hire_date) as months, count(*) as emp_count
+from dbo.employee
+WHERE YEAR(hire_date) = 1985
+Group by Month(hire_date);
+
+
+-- 10. How many employees were joined in April 1985? 
+SELECT count(*) as april_1985_count
+from dbo.employee
+where MONTH(hire_date) = 4 and year(hire_date) = 1985;
+
+/* 11. Which is the Department ID 
+having greater than or equal to 3 employees 
+joining in April 1985?
+*/
+SELECT department_id,  count(*) as april_1985_count
+from dbo.employee
+where MONTH(hire_date) = 4 
+and YEAR(hire_date) = 1985
+GROUP BY Department_Id
+HAVING COUNT(*) >= 3;
+
 Joins: 
 1. List out employees with their department names. 
 2. Display employees with their designations. 
