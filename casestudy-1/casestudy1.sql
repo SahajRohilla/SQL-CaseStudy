@@ -288,25 +288,140 @@ JOIN DEPARTMENT D ON E.Department_Id = D.Department_Id
 WHERE D.Name IN ('Sales', 'Operations');
 
 
-CONDITIONAL STATEMENT 
-1. Display the employee details with salary grades. Use conditional statement to 
-create a grade column. 
-2. List out the number of employees grade wise. Use conditional statement to 
-create a grade column. 
+-- CONDITIONAL STATEMENT 
+/*1. Display the employee details with salary grades. 
+Use conditional statement to create a grade column. 
+*/
+SELECT *,
+     CASE 
+           WHEN Salary >= 3000 THEN 'A'
+           WHEN Salary BETWEEN 2000 AND 2999 THEN 'B'
+           WHEN Salary BETWEEN 1000 AND 1999 THEN 'C'
+           ELSE 'D'
+       END AS Grade
+From dbo.EMPLOYEE;
+/*
+2. List out the number of employees grade wise. 
+Use conditional statement to create a grade column. 
+*/
+SELECT
+     CASE 
+           WHEN Salary >= 3000 THEN 'A'
+           WHEN Salary BETWEEN 2000 AND 2999 THEN 'B'
+           WHEN Salary BETWEEN 1000 AND 1999 THEN 'C'
+           ELSE 'D'
+       END AS grade,
+       Count(*) as total_employe
+From dbo.EMPLOYEE
+GROUP BY 
+    CASE 
+           WHEN Salary >= 3000 THEN 'A'
+           WHEN Salary BETWEEN 2000 AND 2999 THEN 'B'
+           WHEN Salary BETWEEN 1000 AND 1999 THEN 'C'
+           ELSE 'D'
+       END;
+/*
 3. Display the employee salary grades and the number of employees between 
 2000 to 5000 range of salary. 
-Subqueries: 
-1. Display the employees list who got the maximum salary. 
-2. Display the employees who are working in the sales department. 
-3. Display the employees who are working as 'Clerk'. 
-4. Display the list of employees who are living in 'Boston'. 
-5. Find out the number of employees working in the sales department. 
-6. Update the salaries of employees who are working as clerks on the basis of 
-10%. 
-7. Display the second highest salary drawing employee details. 
-8. 
-List out the employees who earn more than every employee in department 30. 
-9. 
-Find out which department has no employees. 
-10. Find out the employees who earn greater than the average salary for 
-their department. 
+*/
+SELECT
+     CASE 
+           WHEN Salary >= 3000 THEN 'A'
+           WHEN Salary BETWEEN 2000 AND 2999 THEN 'B'
+           WHEN Salary BETWEEN 1000 AND 1999 THEN 'C'
+           ELSE 'D'
+       END AS grade,
+       Count(*) as total_employe
+From dbo.EMPLOYEE
+WHERE Salary BETWEEN 2000 AND 5000
+GROUP BY 
+    CASE 
+           WHEN Salary >= 3000 THEN 'A'
+           WHEN Salary BETWEEN 2000 AND 2999 THEN 'B'
+           WHEN Salary BETWEEN 1000 AND 1999 THEN 'C'
+           ELSE 'D'
+       END;
+
+-- Subqueries: 
+-- 1. Display the employees list who got the maximum salary.
+SELECT * FROM dbo.EMPLOYEE 
+WHERE salary = (
+                SELECT max(salary) 
+                from dbo.EMPLOYEE);
+
+-- 2. Display the employees who are working in the sales department. 
+SELECT * FROM dbo.EMPLOYEE 
+WHERE DEPARTMENT_ID = (
+                SELECT DEPARTMENT_ID 
+                from dbo.DEPARTMENT
+                WHERE name = 'sales');
+-- 3. Display the employees who are working as 'Clerk'.
+SELECT * FROM dbo.EMPLOYEE 
+WHERE JOB_ID = (
+                SELECT JOB_ID 
+                from dbo.JOB
+                WHERE Designation = 'clerk');
+
+-- 4. Display the list of employees who are living in 'Boston'. 
+SELECT * FROM dbo.EMPLOYEE 
+WHERE DEPARTMENT_ID = (
+                SELECT DEPARTMENT_ID 
+                from dbo.DEPARTMENT
+                WHERE Location_Id = (
+                    SELECT Location_Id FROM LOCATION
+                    WHERE city = 'Boston'
+                )
+            );
+
+/*
+5. Find out the number of employees
+working in the sales department. 
+*/
+SELECT count(*) as emp_count FROM dbo.EMPLOYEE 
+WHERE DEPARTMENT_ID = (
+                SELECT DEPARTMENT_ID 
+                from dbo.DEPARTMENT
+                WHERE name = 'sales');
+
+/*
+6. Update the salaries of employees who are working as clerks 
+on the basis of 10%.
+*/
+UPDATE EMPLOYEE
+SET Salary = Salary * 1.10
+WHERE Job_Id = (
+    SELECT Job_Id FROM JOB WHERE Designation = 'Clerk'
+);
+
+-- 7. Display the second highest salary drawing employee details. 
+SELECT * FROM EMPLOYEE
+WHERE Salary = (
+    SELECT MAX(Salary) FROM EMPLOYEE
+    WHERE Salary < (
+        SELECT MAX(Salary) FROM EMPLOYEE
+    )
+);
+/*
+8. List out the employees who earn more than every employee 
+in department 30. 
+*/
+SELECT * FROM EMPLOYEE
+WHERE Salary > ALL (
+    SELECT Salary FROM EMPLOYEE WHERE Department_Id = 30
+);
+
+-- 9. Find out which department has no employees. 
+SELECT * FROM DEPARTMENT
+WHERE Department_Id NOT IN (
+    SELECT DISTINCT Department_Id FROM EMPLOYEE
+);
+
+/*
+10. Find out the employees who earn greater than the 
+average salary for their department. 
+*/
+SELECT * FROM EMPLOYEE E
+WHERE Salary > (
+    SELECT AVG(Salary) FROM EMPLOYEE
+    WHERE Department_Id = E.Department_Id
+);
