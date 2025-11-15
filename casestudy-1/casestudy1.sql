@@ -94,7 +94,9 @@ Department_ID as "Dep_id"
 FROM dbo.employee; 
 
 -- 7. List out the annual salary of the employees with their names only. 
-SELECT CONCAT(FIRST_NAME,' ', Middle_name,' ', Last_name), Salary from dbo.employee;
+SELECT CONCAT(FIRST_NAME,' ', Middle_name,' ', Last_name), 
+(Salary * 12) as Annual_salary 
+from dbo.employee;
 
 -- WHERE Condition: 
 --1. List the details about "Smith". 
@@ -104,7 +106,7 @@ SELECT * from dbo.employee where last_name = 'smith';
 SELECT * from dbo.employee where department_id = 20;
 
 -- 3. List out the employees who are earning salary between 2000 and 3000. 
-SELECT * from dbo.employee where salary > 2000 and salary<3000;
+SELECT * from dbo.employee where salary between 2000 and 3000;
 
 -- 4. List out the employees who are working in department 10 or 20. 
 SELECT * from dbo.employee where department_id in (10,20);
@@ -129,25 +131,57 @@ SELECT * from dbo.employee where comm is null;
 
 -- ORDER BY Clause: 
 -- 1. List out the Employee ID and Last Name in ascending order based on the Employee ID. 
-SELECT employee_id, last_name from dbo.employee order by employee_id;
+SELECT employee_id, last_name 
+from dbo.employee order by employee_id;
 
 -- 2. List out the Employee ID and Name in descending order based on salary. 
-SELECT employee_id, first_name from dbo.employee order by salary desc;
+SELECT employee_id, first_name + ' ' + last_name as fullname
+from dbo.employee order by salary desc;
 
 -- 3. List out the employee details according to their Last Name in ascending-order. 
 SELECT * from dbo.employee order by last_name asc;
 
 /* 4. List out the employee details according to their Last Name in ascending order 
-and then Department ID in descending order. GROUP BY and HAVING Clause: 
+and then Department ID in descending order. 
 */
-SELECT * from dbo.employee order by Last_name asc, department_id desc group by 
-1. List out the department wise maximum salary, minimum salary and 
-average salary of the employees. 
-2. List out the job wise maximum salary, minimum salary and average 
-salary of the employees. 
-3. List out the number of employees who joined each month in ascending order. 
-4. List out the number of employees for each month and year in 
+SELECT * from dbo.employee 
+order by Last_name asc, department_id desc;
+
+-- GROUP BY and HAVING Clause: 
+/* 1. List out the department wise maximum salary, 
+minimum salary and average salary of the employees. 
+*/
+SELECT department_id,
+max(salary) as min_salary,
+min(salary) as max_salary,
+avg(salary) as avg_salary
+from dbo.employee 
+GROUP by department_id;
+
+/* 2. List out the job wise maximum salary,
+minimum salary and average salary of the employees. */
+SELECT job_id,
+max(salary) as min_salary,
+min(salary) as max_salary,
+avg(salary) as avg_salary
+from dbo.employee 
+GROUP by job_id;
+
+/*3. List out the number of employees 
+who joined each month in ascending order. 
+*/
+SELECT DATENAME(Month, HIRE_DATE) as month_name,
+count(*) as total_emp 
+from dbo.employee
+GROUP BY DATENAME(MONTH, Hire_Date), MONTH(Hire_Date)
+ORDER BY MONTH(Hire_Date);
+
+/* 4. List out the number of employees 
+for each month and year in 
 ascending order based on the year and month. 
+*/
+SELECT * FROM dbo.employee;
+
 5. List out the Department ID having at least four employees. 
 6. How many employees joined in February month. 
 7. How many employees joined in May or June month. 
