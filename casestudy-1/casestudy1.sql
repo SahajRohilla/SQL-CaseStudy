@@ -180,10 +180,23 @@ ORDER BY MONTH(Hire_Date);
 for each month and year in 
 ascending order based on the year and month. 
 */
-SELECT * FROM dbo.employee;
+SELECT YEAR(Hire_date) as year, MONTH(Hire_date) as month,
+count(*) as total_emp 
+FROM dbo.employee
+GROUP BY YEAR(Hire_date), MONTH(Hire_date)
+ORDER BY year, month;
 
-5. List out the Department ID having at least four employees. 
-6. How many employees joined in February month. 
+-- 5. List out the Department ID having at least four employees.
+SELECT department_id, count(*) as emp_count
+from dbo.employee
+Group by department_id 
+having count(*) >=4;
+
+-- 6. How many employees joined in February month. 
+SELECT count(*) as feb_emp_count
+from dbo.employee
+where MONTH(hire_date) =2;
+
 7. How many employees joined in May or June month. 
 8. How many employees joined in 1985? 
 9. How many employees joined each month in 1985? 
