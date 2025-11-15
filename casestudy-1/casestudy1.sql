@@ -230,19 +230,64 @@ and YEAR(hire_date) = 1985
 GROUP BY Department_Id
 HAVING COUNT(*) >= 3;
 
-Joins: 
-1. List out employees with their department names. 
-2. Display employees with their designations. 
-3. Display the employees with their department names and city. 
-4. How many employees are working in different departments? Display with 
-department names. 
-5. How many employees are working in the sales department? 
-6. Which is the department having greater than or equal to 3 
-employees and display the department names in 
-ascending order. 
-7. How many employees are working in 'Dallas'? 
-8. 
-Display all employees in sales or operation departments. 
+--Joins: 
+--1. List out employees with their department names. 
+SELECT em.*, dp.name from dbo.employee as em
+JOIN dbo.department as dp
+ON em.department_id = dp.department_id;
+
+-- 2. Display employees with their designations. 
+SELECT em.*, jb.designation from dbo.employee as em
+JOIN dbo.job as jb
+ON em.job_id = jb.job_id;
+
+-- 3. Display the employees with their department names and city. 
+SELECT em.*, dp.name, lo.city FROM dbo.employee as em
+JOIN dbo.department as dp
+ON em.department_id = dp.department_id
+JOIN dbo.location as lo
+ON dp.location_id = lo.location_id;
+
+-- 4. How many employees are working in different departments? Display with department names. 
+SELECT dp.name as department_name, count(*) as emp_count
+FROM dbo.employee as em
+JOIN dbo.department as dp
+ON em.department_id = dp.department_id
+GROUP BY dp.name;
+
+-- 5. How many employees are working in the sales department? 
+SELECT count(*) as emp_count
+FROM dbo.employee as em
+JOIN dbo.department as dp
+ON em.department_id = dp.department_id
+Where dp.name = 'Sales';
+
+/*6. Which is the department having greater than or equal to 3 
+employees and display the department names in ascending order.
+*/
+SELECT dp.name as department_name, count(*) as emp_count
+FROM dbo.employee as em
+JOIN dbo.department as dp
+ON em.department_id = dp.department_id
+GROUP By dp.name
+Having count(*) >=3
+order by dp.name;
+
+-- 7. How many employees are working in 'Dallas'? 
+SELECT count(*) as emp_count FROM dbo.employee as em
+JOIN dbo.department as dp
+ON em.department_id = dp.department_id
+JOIN dbo.location as lo
+ON dp.location_id = lo.location_id
+where lo.city = 'Dallas';
+
+-- 8. Display all employees in sales or operation departments. 
+SELECT E.*
+FROM EMPLOYEE E
+JOIN DEPARTMENT D ON E.Department_Id = D.Department_Id
+WHERE D.Name IN ('Sales', 'Operations');
+
+
 CONDITIONAL STATEMENT 
 1. Display the employee details with salary grades. Use conditional statement to 
 create a grade column. 
